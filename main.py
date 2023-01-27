@@ -1,9 +1,9 @@
 import random
 punkty = 0
+die = False
 
 
-
-while True :
+while die == False :
 
     mapa_1 = [
         ["+","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","+"],
@@ -29,15 +29,39 @@ while True :
 
     win = False
 
-    for g in range(7):
+    cave = False
+
+    while cave == False:
+        l = random.randint(2,22)
+        if (l % 2) == 0:
+            cave = True
+            if random.randint(1,2) == 1:
+                mapa_1[8][l] = "X"
+                mapa_1[8][l+2] = "X"
+                mapa_1[8][l+4] = "X"
+                mapa_1[8][l+6] = "X"
+                mapa_1[9][l+2] = "X"
+                mapa_1[9][l+4] = "X"   
+                mapa_1[7][l] = " "
+                mapa_1[7][l+2] = " "
+                mapa_1[7][l+4] = " "
+                mapa_1[7][l+6] = " "
+            else:
+                mapa_1[8][l] = "X"
+                mapa_1[8][l+2] = "X"
+                mapa_1[8][l+4] = "X"
+                mapa_1[8][l+6] = "X"
+                mapa_1[9][l+2] = "X"
+                mapa_1[9][l+4] = "X"  
+
+
+    for g in range(10):
         gem = random.randint(2, 28)
         if (gem % 2) == 0:
-            maxg = maxg + 1
-            mapa_1[random.randint(6, 10)][gem] = "O"
-
-
-
-        
+            gem2 = random.randint(6, 10)
+            if not mapa_1[gem2][gem] == "X":
+                maxg = maxg + 1
+                mapa_1[gem2][gem] = "O"
 
 
 
@@ -58,17 +82,20 @@ while True :
         elif mapa_1[x][y] == "■":
             return "kamień"
         
-        elif mapa_1[x][y] == "X":
+        elif mapa_1[x][y] == "□":
             return "kamień2"
 
         elif mapa_1[x][y] == "O":
             return "punkt"
+        
 
         else:
             return "niedozwolony"
 
 
-
+    def smierd(x, y, mapa_1):
+        if mapa_1[x+1][y] == "X":
+            return "die"
 
 
 
@@ -80,77 +107,100 @@ while True :
         ruch = input()
 
         if ruch == "w":
-            walidacja = walidacja_ruchu(x-1, y, mapa_1)
-            if walidacja == "dozwolony":
-                mapa_1[x][y] = " "
-                x = x - 1
-                mapa_1[x][y] = "I"
-            elif walidacja == "punkt":
-                mapa_1[x-1][y] = " "
-                punkty = punkty + 1
-                puk = puk + 1
+            smierdd = smierd(x,y,mapa_1)
+            if smierdd == "die":
+                print("you died")
+                die = True
+                win = True
+            else:
+                walidacja = walidacja_ruchu(x-1, y, mapa_1)
+                if walidacja == "dozwolony":
+                    mapa_1[x][y] = " "
+                    x = x - 1
+                    mapa_1[x][y] = "I"
+                elif walidacja == "punkt":
+                    mapa_1[x-1][y] = " "
+                    punkty = punkty + 1
+                    puk = puk + 1
 
         if ruch == "s":
-            walidacja = walidacja_ruchu(x+1, y, mapa_1)
-            if walidacja == "dozwolony":
-                mapa_1[x][y] = " "
-                x = x + 1
-                mapa_1[x][y] = "I"
+            smierdd = smierd(x,y,mapa_1)
+            if smierdd == "die":
+                print("you died")
+                die = True
+                win = True
+            else:                
+                walidacja = walidacja_ruchu(x+1, y, mapa_1)
+                if walidacja == "dozwolony":
+                    mapa_1[x][y] = " "
+                    x = x + 1
+                    mapa_1[x][y] = "I"
 
-            elif walidacja == "kamień":
-                mapa_1[x+1][y] = "X"
+                elif walidacja == "kamień":
+                    mapa_1[x+1][y] = "□"
 
-            elif walidacja == "kamień2":
-                mapa_1[x+1][y] = " "
+                elif walidacja == "kamień2":
+                    mapa_1[x+1][y] = " "
 
-            elif walidacja == "punkt":
-                mapa_1[x+1][y] = " "
-                punkty = punkty + 1
-                puk = puk + 1
+                elif walidacja == "punkt":
+                    mapa_1[x+1][y] = " "
+                    punkty = punkty + 1
+                    puk = puk + 1
 
         if ruch == "a":
+            smierdd = smierd(x,y,mapa_1)
+            if smierdd == "die":
+                print("you died")
+                die = True
+                win = True
+            else:
+                walidacja = walidacja_ruchu(x, y-2, mapa_1)
+                if walidacja == "dozwolony":
 
-            walidacja = walidacja_ruchu(x, y-2, mapa_1)
-            if walidacja == "dozwolony":
+                    mapa_1[x][y] = " "
+                    y = y - 2
+                    if mapa_1[x+1][y] == " ":
+                        x = x + 1 
 
-                mapa_1[x][y] = " "
-                y = y - 2
-                if mapa_1[x+1][y] == " ":
-                    x = x + 1 
+                    mapa_1[x][y] = "I"
+                elif walidacja == "kamień":
+                    mapa_1[x][y-2] = "□"
+                elif walidacja == "kamień2":
+                    mapa_1[x][y-2] = " "
 
-                mapa_1[x][y] = "I"
-            elif walidacja == "kamień":
-                mapa_1[x][y-2] = "X"
-            elif walidacja == "kamień2":
-                mapa_1[x][y-2] = " "
-
-            elif walidacja == "punkt":
-                mapa_1[x][y-2] = " "
-                punkty = punkty + 1
-                puk = puk + 1
+                elif walidacja == "punkt":
+                    mapa_1[x][y-2] = " "
+                    punkty = punkty + 1
+                    puk = puk + 1
 
 
             
 
         if ruch == "d":
-            walidacja = walidacja_ruchu(x, y+2, mapa_1)
-            if walidacja == "dozwolony":
+            smierdd = smierd(x,y,mapa_1)
+            if smierdd == "die":
+                print("you died")
+                die = True
+                win = True
+            else:                
+                walidacja = walidacja_ruchu(x, y+2, mapa_1)
+                if walidacja == "dozwolony":
 
-                mapa_1[x][y] = " "
-                y = y + 2
-                if mapa_1[x+1][y] == " ":
-                    x = x + 1 
+                    mapa_1[x][y] = " "
+                    y = y + 2
+                    if mapa_1[x+1][y] == " ":
+                        x = x + 1 
 
-                mapa_1[x][y] = "I"
-            elif walidacja == "kamień":
-                mapa_1[x][y+2] = "X"
-            elif walidacja == "kamień2":
-                mapa_1[x][y+2] = " "
+                    mapa_1[x][y] = "I"
+                elif walidacja == "kamień":
+                    mapa_1[x][y+2] = "□"
+                elif walidacja == "kamień2":
+                    mapa_1[x][y+2] = " "
 
-            elif walidacja == "punkt":
-                mapa_1[x][y+2] = " "
-                punkty = punkty + 1
-                puk = puk + 1
+                elif walidacja == "punkt":
+                    mapa_1[x][y+2] = " "
+                    punkty = punkty + 1
+                    puk = puk + 1
 
         plansza()
 
